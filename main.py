@@ -1,6 +1,5 @@
 from profilehooks import profile
 
-
 def fibonacci_rec(n: int) -> int:
     """Возвращает N-е число Фибоначчи. Реализована рекурсивно согласно
     формуле вычисления последовательности.
@@ -8,8 +7,14 @@ def fibonacci_rec(n: int) -> int:
     :param n: порядковый номер числа Фибоначчи
     :return: число Фибоначчи
     """
-    pass
-
+    if n < 0: 
+        raise ValueError("Порядковый номер должен быть неотрицательным.")  # Проверка на отрицательное число 
+    elif n == 0: 
+        return 0  # Возвращаем 0 для n = 0 
+    elif n == 1 or n == 2: 
+        return 1  # Возвращаем 1 для n = 1 и n = 2
+    else: 
+        return fibonacci(n - 1) + fibonacci(n - 2) 
 
 def fibonacci_iter(n: int) -> int:
     """Возвращает N-е число Фибоначчи. Реализована итеративно с использованием
@@ -18,8 +23,17 @@ def fibonacci_iter(n: int) -> int:
     :param n: порядковый номер числа Фибоначчи
     :return: число Фибоначчи
     """
-    pass
-
+    if n < 0: 
+        raise ValueError("Порядковый номер должен быть неотрицательным.")  # Проверка на отрицательное число 
+    elif n == 0: 
+        return 0  # Возвращаем 0 для n = 0 
+    elif n == 1 or n == 2: 
+        return 1  # Возвращаем 1 для n = 1 и n = 2
+    
+    fib = [0, 1] # Массив для хранения чисел Фибоначчи
+    for i in range(2, n + 1):
+        fib.append(fib[i - 1] + fib[i - 2]) # Добавление суммы двух предыдущих чисел к массиву
+    return fib[n]
 
 def fibonacci(n: int) -> int:
     """Возвращает N-е число Фибоначчи. Реализована итеративно без использования массива.
@@ -27,8 +41,20 @@ def fibonacci(n: int) -> int:
     :param n: порядковый номер числа Фибоначчи
     :return: число Фибоначчи
     """
-    pass
 
+    if n < 0: 
+        raise ValueError("Порядковый номер должен быть неотрицательным.")  # Проверка на отрицательное число 
+    elif n == 0: 
+        return 0  # Возвращаем 0 для n = 0 
+    elif n == 1 or n == 2: 
+        return 1  # Возвращаем 1 для n = 1 и n = 2          
+    
+    a, b = 1, 1  # Начальные значения для n = 1 и n = 2 
+    for i in range(2, n): 
+        a, b = b, a + b  # Обновляем значения 
+    return b
+
+@profile()
 
 def main():
     n = 35
@@ -39,7 +65,7 @@ def main():
     print(fibonacci_iter(n))
 
     print(f"\nВычисление {n} числа Фибоначчи итеративно без использования массива:")
-    print(fibonacci_iter(n))
+    print(fibonacci(n))
 
 
 if __name__ == "__main__":
