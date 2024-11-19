@@ -8,7 +8,17 @@ def rabbits(target_month: int, rabbit_lifetime: int) -> int:
     :param rabbit_lifetime: продолжительность жизни каждого кролика, не менее 2 месяцев.
     :return: количество пар кроликов
     """
-    pass
+    rabbits = [1, 1]
+    counter = 0
+    for i in range(2, target_month):
+        if i >= rabbit_lifetime:
+            rabbits.append(rabbits[i - counter - 1] + rabbits[i - counter - 2] - rabbits[i - counter - rabbit_lifetime])
+            rabbits.pop(0)
+            counter += 1
+        else:
+            rabbits.append(rabbits[i - counter - 1] + rabbits[i - counter - 2])
+    
+    return rabbits[-1]
 
 
 def main():
