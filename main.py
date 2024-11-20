@@ -1,4 +1,4 @@
-from memory_profiler import profile
+from profilehooks import profile
 
 def fibonacci_rec(n: int) -> int:
     if n <= 0:
