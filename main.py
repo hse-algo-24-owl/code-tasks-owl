@@ -1,4 +1,4 @@
-from profilehooks import profile
+#from profilehooks import profile
 
 
 def fibonacci_rec(n: int) -> int:
@@ -8,7 +8,9 @@ def fibonacci_rec(n: int) -> int:
     :param n: порядковый номер числа Фибоначчи
     :return: число Фибоначчи
     """
-    pass
+    if n in (1, 2):
+        return 1
+    return fibonacci(n - 1) + fibonacci(n - 2)
 
 
 def fibonacci_iter(n: int) -> int:
@@ -18,7 +20,12 @@ def fibonacci_iter(n: int) -> int:
     :param n: порядковый номер числа Фибоначчи
     :return: число Фибоначчи
     """
-    pass
+    if n <= 1:
+        return n
+    fib = [0, 1]
+    for i in range(2, n + 1):
+        fib.append(fib[i - 1] + fib[i - 2])
+    return fib[n]
 
 
 def fibonacci(n: int) -> int:
@@ -27,7 +34,13 @@ def fibonacci(n: int) -> int:
     :param n: порядковый номер числа Фибоначчи
     :return: число Фибоначчи
     """
-    pass
+    a = 0
+    b = 1
+    for i in range(n):
+        temp = a
+        a = b
+        b = temp + b
+    return a
 
 
 def main():
