@@ -8,8 +8,25 @@ def rabbits(target_month: int, rabbit_lifetime: int) -> int:
     :param rabbit_lifetime: продолжительность жизни каждого кролика, не менее 2 месяцев.
     :return: количество пар кроликов
     """
-    pass
+    # Учитываем, что на первом месяце у нас 1 пара кроликов
+    if target_month == 1:
+        return 1
 
+    # Массив для хранения количества пар кроликов на каждом месяце
+    number = [0] * target_month
+    number[0] = 1  # В первом месяце одна пара кроликов
+
+    for month in range(1, target_month):
+        # Все новые кролики - это количество пар кроликов за предыдущий месяц
+        number[month] = number[month - 1]
+        if month >= 2:
+            number[month] += number[month - 2]
+
+        # Учитываем умирание кроликов
+        if month >= rabbit_lifetime:
+            number[month] -= number[month - rabbit_lifetime]
+
+    return number[-1]  # Возвращаем количество пар кроликов на последний месяц
 
 def main():
     n = 35
