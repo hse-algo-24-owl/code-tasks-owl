@@ -156,5 +156,5 @@ cython_debug/
 
 # PyCharm
 .idea/
-
+.vs
 .vscode
