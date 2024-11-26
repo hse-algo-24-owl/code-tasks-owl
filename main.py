@@ -1,8 +1,9 @@
-def validate_matrix(matrix, n):
+def validate_matrix(matrix):
   """Проверяет трехдиагональную матрицу и выкидывает исключения"""
-  if not matrix:
+  if matrix is None or not isinstance(matrix, list) or not matrix:
     raise Exception("Параметр не является трехдиагональной матрицей")
-  if not all(len(row) == n for row in matrix):
+  n = len(matrix)
+  if any(not isinstance(row, list) or len(row) != n for row in matrix):
     raise Exception("Параметр не является трехдиагональной матрицей")
   for i in range(n):
     for j in range(n):
@@ -32,28 +33,25 @@ def get_tridiagonal_determinant(matrix: list[list[int]]) -> int:
 
     :return: значение определителя.
     """
-    if matrix is None:
-        raise Exception("Параметр не является трехдиагональной матрицей")
+    validate_matrix(matrix)
     n = len(matrix)
-    validate_matrix(matrix, n)
     
+    a = matrix[0][0] 
     if n == 1:
-        return matrix[0][0]
-    elif n == 2:
-        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]    
+        return a
+    b = matrix[0][1] 
+    c = matrix[1][0] 
     
-    det = [0] * (n + 1)
-    det[0] = 1
-    det[1] = matrix[0][0]
+    det_previous = a
+    det_second = a * matrix[1][1] - b * c
     
-    for i in range(2, n + 1):
-        a = matrix[i - 1][i - 1] 
-        b = matrix[i - 1][i - 2] 
-        c = matrix[i - 2][i - 1] 
-        det[i] = a * det[i - 1] - b * c * det[i - 2]
+    for i in range(2, n):
+        det_next = a * det_second - b * c * det_previous
+        det_previous = det_second
+        det_second = det_next
 
-    return det[n]
-
+    return det_second
+  
 def main():
     matrix = [[2, -3, 0, 0], [5, 2, -3, 0], [0, 5, 2, -3], [0, 0, 5, 2]]
     print("Трехдиагональная матрица")
