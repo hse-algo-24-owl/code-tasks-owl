@@ -4,27 +4,26 @@ def get_tridiagonal_determinant(matrix: list[list[int]]) -> int:
 
     :return: значение определителя.
     """
-    check = Check(matrix)
-    if check:
-        n = len(matrix)
-        a = matrix[0][0]
-        if n == 1:
-            return a
-        b = matrix[0][1]
-        c = matrix[1][0]
-        det1 = a
-        det2 = a**2 - b*c
-        if n == 2:
-            return det2
-        det_n = 0
-        for _ in range(2, n):
-            det_n = a*det2 - b*c*det1
-            det1 = det2
-            det2 = det_n
-        return det_n
+    check(matrix)
+    n = len(matrix)
+    a = matrix[0][0]
+    if n == 1:
+        return a
+    b = matrix[0][1]
+    c = matrix[1][0]
+    det1 = a
+    det2 = a**2 - b*c
+    if n == 2:
+        return det2
+    det_n = 0
+    for _ in range(2, n):
+        det_n = a*det2 - b*c*det1
+        det1 = det2
+        det2 = det_n
+    return det_n
 
 
-def Check(matrix) -> bool:
+def check(matrix):
     """Тест 1 и 2"""
     """Проверяет, является ли матрица трехдиагональной."""
     if not matrix:
@@ -54,7 +53,6 @@ def Check(matrix) -> bool:
         for j in range(1,n):
             if matrix[i-1][j-1] != matrix[i][j]:
                 raise Exception("Параметр не является трехдиагональной матрицей")
-    return True
 
 def main():
     matrix = [[2, -3, 0, 0], [5, 2, -3, 0], [0, 5, 2, -3], [0, 0, 5, 2]]
