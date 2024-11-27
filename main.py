@@ -6,17 +6,16 @@ def calculate_determinant(matrix: list[list[int]]) -> int:
     квадратной матрицей
     :return: значение определителя
     """
-    isInputCorrect(matrix)
+    is_input_correct(matrix)
     if len(matrix) == 1:
         return matrix[0][0]
-    elif len(matrix) == 2:
+    if len(matrix) == 2:
         return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]
-    else:
-        determinant = 0
-        for j in range (len(matrix[0])):
-            minor_matrix = calculate_minor(matrix, j)
-            determinant += matrix[0][j] * (-1)**( 0+1 + j+1) * calculate_determinant(minor_matrix)
-        return determinant
+    determinant = 0
+    for j in range (len(matrix[0])):
+        minor_matrix = calculate_minor(matrix, j)
+        determinant += matrix[0][j] * (-1)**( 0+1 + j+1) * calculate_determinant(minor_matrix)
+    return determinant
 
 def calculate_minor(matrix: list[list[int]], column) -> list[list[int]]:
     """Вычисляет минор матрицы
@@ -27,12 +26,16 @@ def calculate_minor(matrix: list[list[int]], column) -> list[list[int]]:
     minor_matrix = [row[:column] + row[column+1:] for row in matrix[1:]]
     return minor_matrix
 
-def isInputCorrect(matrix: list[list[int]]) -> None:
+def is_input_correct(matrix: list[list[int]]) -> None:
     """Проверяет что матрица квадратная и целочисленная
     :param matrix: исходная матрица
     :return: None
     """
+    if isinstance(matrix, list) == False:
+        raise Exception()
     for i in range (len(matrix)):
+        if isinstance(matrix[i], list) == False:
+            raise Exception()
         if len(matrix) != len(matrix[i]):
             raise Exception()
         for j in range (len(matrix[i])):
