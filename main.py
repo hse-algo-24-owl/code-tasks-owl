@@ -10,16 +10,14 @@ def calculate_determinant(matrix: list[list[int]]) -> int:
     order = len(matrix)
     if order == 1:
         return matrix[0][0]
-    elif order == 2:
-        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
 
     det = 0
     for idx, value in enumerate(matrix[0]):
         if value == 0:
             continue
         minor = [row[:idx] + row[idx + 1 :] for row in matrix[1:]]
-        co_factor = (-1) ** idx
-        det += value * co_factor * calculate_determinant(minor)
+        co_factor = (-1) ** idx * calculate_determinant(minor)
+        det += value * co_factor
 
     return det
 
