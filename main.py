@@ -20,7 +20,31 @@ def get_triangle_path_count(length: int) -> int:
     числом.
     :return: Количество маршрутов.
     """
-    pass
+    # Проверка входных значений 
+    if not isinstance(length, int) or isinstance(length, bool): 
+        raise ValueError(PATH_LENGTH_ERROR_MSG) 
+    if length < 1: 
+        raise ValueError(PATH_LENGTH_ERROR_MSG) 
+ 
+    def a(n): 
+        if n == 1: 
+            return 0 
+        else: 
+            return b(n - 1) + c(n - 1) 
+ 
+    def b(n): 
+        if n == 1: 
+            return 1 
+        else: 
+            return a(n - 1) + c(n - 1) 
+ 
+    def c(n): 
+        if n == 1: 
+            return 1 
+        else: 
+            return a(n - 1) + b(n - 1) 
+ 
+    return a(length)
 
 
 def binomial_coefficient(n: int, k: int, use_rec=False) -> int:
@@ -32,7 +56,28 @@ def binomial_coefficient(n: int, k: int, use_rec=False) -> int:
     числами или значение параметра n меньше чем k.
     :return: Значение биномиального коэффициента.
     """
-    pass
+    # Проверка входных значений 
+    if not isinstance(n, int) or not isinstance(k, int): 
+        raise ValueError(NOT_INT_VALUE_TEMPL.format("n" if not isinstance(n, int) else "k")) 
+    if n < 0 or k < 0: 
+        raise ValueError(NEGATIVE_VALUE_TEMPL.format("n" if n < 0 else "k")) 
+    if n < k: 
+        raise ValueError(N_LESS_THAN_K_ERROR_MSG) 
+     
+    # Рекурсивная реализация 
+    if use_rec: 
+        if k == 0 or k == n: 
+            return 1 
+        return binomial_coefficient(n - 1, k - 1, use_rec=True) + binomial_coefficient(n - 1, k, use_rec=True) 
+     
+    # Итеративная реализация 
+    mtx = [[0] * (k + 1) for i in range(n + 1)] 
+    for i in range(n + 1): 
+        mtx[i][0] = 1 
+        for j in range(1, min(i, k) + 1): 
+            mtx[i][j] = mtx[i - 1][j - 1] + mtx[i - 1][j] 
+     
+    return mtx[n][k]
 
 
 def main():
