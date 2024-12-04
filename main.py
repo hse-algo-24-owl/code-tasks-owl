@@ -17,21 +17,20 @@ def validate_strings(length: int):
     if length < 1:
         raise ValueError(STR_LENGTH_ERROR_MSG)
 
+def strings_ending_with_one(n):                                     #Генерация строк заканчивающихся на 1
+    if n == 1:
+        return ["1"]                                                #Если длина равна 1 - возвращаем 1                                                       
+    return [s + "1" for s in generate_strings(n - 1)]               #Рекурсивно генерим все строки длиной n-1 и добавляем к каждой 1
+
+def strings_ending_with_zero(n):                                    #Генерация строк заканчивающихся на 0
+    if n == 1:
+        return ["0"]                                                #Если длина равна 1 - возвращаем 0
+    return [s + "0" for s in strings_ending_with_one(n - 1)]    #Генерим строки, заканчивающиеся на 1 для длины n-1 и на 0, для заданной длины
+
 #Основная функция
 def generate_strings(length: int) -> list[str]:
-    validate_strings(length)                                        #Валидируем входящий параметр
-    def strings_ending_with_one(n):                                 #Генерация строк заканчивающихся на 1
-        if n == 1:
-            return ["1"]                                            #Если длина равна 1 - возвращаем 1
-        else:                                                       
-            return [s + "1" for s in generate_strings(n - 1)]       #Рекурсивно генерим все строки длиной n-1 и добавляем к каждой 1
-    def strings_ending_with_zero(n):                                #Генерация строк заканчивающихся на 0
-        if n == 1:
-            return ["0"]                                            #Если длина равна 1 - возвращаем 0
-        else:
-            return [s + "0" for s in strings_ending_with_one(n - 1)]#Генерим строки, заканчивающиеся на 1 для длины n-1 и на 0, для заданной длины
-
-    return strings_ending_with_one(length) + strings_ending_with_zero(length)
+    validate_strings(length)                                                    #Валидируем входящий параметр
+    return strings_ending_with_one(length) + strings_ending_with_zero(length)   #
 
 #Валидация параметров для вычисления биномиального коэффициента
 def validate_coef(n: int, k: int):
@@ -52,8 +51,7 @@ def binomial_coefficient(n: int, k: int, use_rec=False) -> int:
     if use_rec:                                                     #Если истинно, то используется рекурсия
         if k == 0 or n == k:
             return 1
-        else:                                                       #Рекурсивное вычисление суммы двух предыдущих значений биномиальных коэффициентов
-            return binomial_coefficient(n - 1, k - 1, use_rec=True) + binomial_coefficient(n - 1, k, use_rec=True)
+        return binomial_coefficient(n - 1, k - 1, use_rec=True) + binomial_coefficient(n - 1, k, use_rec=True)  #Рекурсивное вычисление суммы двух предыдущих значений биномиальных коэффициентов
     else:                                                           #Итерация
         C = [0] * (k + 1)                                           #Создание списка для хранения
         C[0] = 1                                                    #Инициализация первого элемента
