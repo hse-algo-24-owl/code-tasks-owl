@@ -20,7 +20,28 @@ def generate_strings(length: int) -> list[str]:
     числом.
     :return: Список строк.
     """
-    pass
+    if not isinstance(length, int):
+        raise ValueError(NOT_INT_VALUE_TEMPL.format('length'))
+    if length <= 0:
+        raise ValueError(STR_LENGTH_ERROR_MSG)
+
+    def generate_with_0(n):
+        if n == 0:
+            return ['']
+        strings = []
+        strings += ['1' + s for s in generate_with_1(n - 1)]  
+        strings += ['0' + s for s in generate_with_0(n - 1) if s] 
+        return strings
+
+    def generate_with_1(n):
+        if n == 0:
+            return ['']
+        strings = []
+        strings += ['1' + s for s in generate_with_1(n - 1)]  
+        strings += ['0' + s for s in generate_with_0(n - 1)]  
+        return strings
+
+    return _generate_with_1(length)
 
 
 def binomial_coefficient(n: int, k: int, use_rec=False) -> int:
@@ -32,7 +53,31 @@ def binomial_coefficient(n: int, k: int, use_rec=False) -> int:
     числами или значение параметра n меньше чем k.
     :return: Значение биномиального коэффициента.
     """
-    pass
+    if not isinstance(n, int):
+        raise ValueError(NOT_INT_VALUE_TEMPL.format("n"))
+    if not isinstance(k, int):
+        raise ValueError(NOT_INT_VALUE_TEMPL.format("k"))
+    if n < 0:
+        raise ValueError(NEGATIVE_VALUE_TEMPL.format("n"))
+    if k < 0:
+        raise ValueError(NEGATIVE_VALUE_TEMPL.format("k"))
+    if n < k:
+        raise ValueError(N_LESS_THAN_K_ERROR_MSG)
+
+    if use_rec:
+        if k == 0 or k == n:
+            return 1
+        return binomial_coefficient(n - 1, k - 1, use_rec) + binomial_coefficient(n - 1, k, use_rec)
+    else:
+        
+        C = [0] * (k + 1)
+        C[0] = 1 
+
+        for i in range(1, n + 1):
+            for j in range(min(i, k), 0, -1):
+                C[j] += C[j - 1]
+        
+        return C[k]
 
 
 def main():

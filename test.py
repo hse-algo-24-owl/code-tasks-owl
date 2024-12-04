@@ -29,7 +29,7 @@ class TestZeroOne(unittest.TestCase):
         длина строки"""
         for incorrect_val in self.__incorrect_length_values:
             self.assertRaisesRegex(
-                ValueError, STR_LENGTH_ERROR_MSG, generate_strings, incorrect_val
+                ValueError, STR_LENGTH_ERROR_MSG, generate_strings, incorrect_val\
             )
 
     def test_zero_one(self):
