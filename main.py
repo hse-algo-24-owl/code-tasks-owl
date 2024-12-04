@@ -17,20 +17,20 @@ def validate_strings(length: int):
     if length < 1:
         raise ValueError(STR_LENGTH_ERROR_MSG)
 
-def strings_ending_with_one(n):                                     #Генерация строк заканчивающихся на 1
+def strings_ending_with_one(n):                                                                                     #Генерация строк заканчивающихся на 1
     if n == 1:
-        return ["1"]                                                #Если длина равна 1 - возвращаем 1                                                       
-    return [s + "1" for s in generate_strings(n - 1)]               #Рекурсивно генерим все строки длиной n-1 и добавляем к каждой 1
+        return ["1"]                                                                                                #Если длина равна 1 - возвращаем 1                                                       
+    return [s + "1" for s in strings_ending_with_one(n - 1)] + [s + "1" for s in strings_ending_with_zero(n - 1)]   #Рекурсивно генерим все строки длиной n-1 и добавляем к каждой 1
 
 def strings_ending_with_zero(n):                                    #Генерация строк заканчивающихся на 0
     if n == 1:
         return ["0"]                                                #Если длина равна 1 - возвращаем 0
-    return [s + "0" for s in strings_ending_with_one(n - 1)]    #Генерим строки, заканчивающиеся на 1 для длины n-1 и на 0, для заданной длины
+    return [s + "0" for s in strings_ending_with_one(n - 1)]        #Генерим строки, заканчивающиеся на 1 для длины n-1 и на 0, для заданной длины
 
 #Основная функция
 def generate_strings(length: int) -> list[str]:
     validate_strings(length)                                                    #Валидируем входящий параметр
-    return strings_ending_with_one(length) + strings_ending_with_zero(length)   #
+    return strings_ending_with_one(length) + strings_ending_with_zero(length)   
 
 #Валидация параметров для вычисления биномиального коэффициента
 def validate_coef(n: int, k: int):
