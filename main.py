@@ -1,100 +1,111 @@
-import unittest
+STR_LENGTH_ERROR_MSG = "Длина строки должна быть целым положительным числом"
+"""Сообщение об ошибке при некорректном значении параметра Длина строки"""
 
-from main import (
-    generate_strings,
-    binomial_coefficient,
-    STR_LENGTH_ERROR_MSG,
-    NOT_INT_VALUE_TEMPL,
-    NEGATIVE_VALUE_TEMPL,
-    N_LESS_THAN_K_ERROR_MSG,
-)
+NOT_INT_VALUE_TEMPL = "Параметр {0} Не является целым числом"
+"""Шаблон сообщения об ошибке при нечисловом значении параметра"""
 
+NEGATIVE_VALUE_TEMPL = "Параметр {0} отрицательный"
+"""Шаблон сообщения об ошибке при отрицательном значении параметра"""
 
-class TestZeroOne(unittest.TestCase):
-    __incorrect_length_values = [None, 0, -1, 1.1, True, "string"]
-
-    @staticmethod
-    def __get_strings_to_check(length):
-        """Функция генерирует строки из 0 и 1 для проверки"""
-        if length == 0:
-            return []
-        return [
-            ("0" * length + str(bin(i))[2:])[-length:]
-            for i in range(2**length)
-            if "00" not in ("0" * length + str(bin(i))[2:])[-length:]
-        ]
-
-    def test_incorrect_length_values(self):
-        """Проверяет выброс исключения при некорректном значении параметра
-        длина строки"""
-        for incorrect_val in self.__incorrect_length_values:
-            self.assertRaisesRegex(
-                ValueError, STR_LENGTH_ERROR_MSG, generate_strings, incorrect_val
-            )
-
-    def test_zero_one(self):
-        """Проверяет генерацию строк из 0 и 1 для дины строки от 1 до 20"""
-        for i in range(1, 20):
-            self.assertCountEqual(
-                generate_strings(i), TestZeroOne.__get_strings_to_check(i)
-            )
+N_LESS_THAN_K_ERROR_MSG = "Параметр n меньше чем k"
+"""Сообщение об ошибке при значении параметра n меньше чем k"""
 
 
-class TestBinomialCoefficient(unittest.TestCase):
-    def test_n_less_than_k(self):
-        """Проверяет выброс исключения при значении параметра n меньше чем k"""
-        self.assertRaisesRegex(
-            ValueError, N_LESS_THAN_K_ERROR_MSG, binomial_coefficient, 1, 2
-        )
+def generate_strings(length: int) -> list[str]:
+    """Возвращает строки заданной длины, состоящие из 0 и 1, где никакие
+    два нуля не стоят рядом.
 
-    def test_negative_n(self):
-        """Проверяет выброс исключения при отрицательном значении параметра n"""
-        self.assertRaisesRegex(
-            ValueError, NEGATIVE_VALUE_TEMPL.format("n"), binomial_coefficient, -2, 2
-        )
+    :param length: Длина строки.
+    :raise ValueError: Если длина строки не является целым положительным
+    числом.
+    :return: Список строк.
+    """
+    if not type(length) == int:
+        raise ValueError(STR_LENGTH_ERROR_MSG)
+    if length < 1:
+        raise ValueError(STR_LENGTH_ERROR_MSG)
+    if not isinstance(length, int) or length <= 0:
+        raise ValueError(STR_LENGTH_ERROR_MSG)
+    if length == 1:
+        return ['1', '0']
 
-    def test_negative_k(self):
-        """Проверяет выброс исключения при отрицательном значении параметра k"""
-        self.assertRaisesRegex(
-            ValueError, NEGATIVE_VALUE_TEMPL.format("k"), binomial_coefficient, 2, -2
-        )
+    strings = []
+    curr_string = ""
+    add_one_to_str(curr_string, strings, length)
+    add_zero_to_str(curr_string, strings, length)
+    return strings
 
-    def test_n_is_not_int(self):
-        """Проверяет выброс исключения при нечисловом значении параметра n"""
-        self.assertRaisesRegex(
-            ValueError, NOT_INT_VALUE_TEMPL.format("n"), binomial_coefficient, "a", 2
-        )
 
-    def test_k_is_not_int(self):
-        """Проверяет выброс исключения при нечисловом значении параметра k"""
-        self.assertRaisesRegex(
-            ValueError, NOT_INT_VALUE_TEMPL.format("k"), binomial_coefficient, 2, "b"
-        )
+def add_one_to_str(curr_str, strings, length):
+    if len(curr_str) == length:
+        if curr_str not in strings:
+            strings.append(curr_str)
+        return
 
-    def test_binomial_coefficient_tiny(self):
-        """Проверка вычисления биномиального коэффициента при небольших
-        значениях параметров"""
-        pascals_triangle = [[1], [1, 1], [1, 2, 1], [1, 3, 3, 1], [1, 4, 6, 4, 1]]
-        for n in range(len(pascals_triangle)):
-            for k in range(len(pascals_triangle[n])):
-                for use_rec in [True, False]:
-                    res = binomial_coefficient(n, k, use_rec=use_rec)
-                    self.assertEqual(res, pascals_triangle[n][k])
+    add_one_to_str(curr_str + '1', strings, length)
+    add_zero_to_str(curr_str + '1', strings, length)
 
-    def test_binomial_coefficient_middle(self):
-        """Проверка вычисления биномиального коэффициента при средних
-        значениях параметров"""
-        for use_rec in [True, False]:
-            res = binomial_coefficient(10, 5, use_rec=use_rec)
-            self.assertEqual(res, 252)
 
-    def test_binomial_coefficient_large(self):
-        """Проверка вычисления биномиального коэффициента при больших
-        значениях параметров"""
-        for use_rec in [True, False]:
-            res = binomial_coefficient(30, 20, use_rec=use_rec)
-            self.assertEqual(res, 30045015)
+def add_zero_to_str(curr_str, strings, length):
+    if len(curr_str) == length:
+        if curr_str not in strings:
+            strings.append(curr_str)
+        return
+
+    if not curr_str or curr_str[-1] != '0':
+        add_one_to_str(curr_str + '0', strings, length)
+
+
+def binomial_coefficient(n: int, k: int, use_rec=False) -> int:
+    """Вычисляет биномиальный коэффициент из n по k.
+    :param n: Количество элементов в множестве, из которого производится выбор.
+    :param k: Количество элементов, которые нужно выбрать.
+    :param use_rec: Использовать итеративную или рекурсивную реализацию функции.
+    :raise ValueError: Если параметры не являются целыми неотрицательными
+    числами или значение параметра n меньше чем k.
+    :return: Значение биномиального коэффициента.
+    """
+    
+    if not isinstance(n, int):
+        raise ValueError(NOT_INT_VALUE_TEMPL.format("n", n))
+    if not isinstance(k, int):
+        raise ValueError(NOT_INT_VALUE_TEMPL.format("k", k))
+    if n < 0:
+        raise ValueError(NEGATIVE_VALUE_TEMPL.format("n", n))
+    if k < 0:
+        raise ValueError(NEGATIVE_VALUE_TEMPL.format("k", k))
+    if n < k:
+        raise ValueError(N_LESS_THAN_K_ERROR_MSG.format(n, k))
+    
+    if use_rec:
+        if k == 0:
+            return 1
+        if k == n:
+            return 1
+        return binomial_coefficient(n - 1, k, use_rec=True) + binomial_coefficient(n - 1, k - 1, use_rec=True)
+    else:
+        result = [1] + [0] * k 
+        for i in range(0, n + 1):
+            for j in range(min(i, k), 0, -1):
+                result[j] += result[j - 1]
+        return result[k]
+
+
+def main():
+    n = 5
+    print(f"Строки длиной {n}:\n{generate_strings(n)}")
+
+    n = 30
+    k = 20
+    print(
+        f"Биномиальный коэффициент (итеративно) при n, k ({n}, {k}) = ",
+        binomial_coefficient(n, k),
+    )
+    print(
+        f"Биномиальный коэффициент (рекурсивно) при n, k ({n}, {k}) = ",
+        binomial_coefficient(n, k, use_rec=True),
+    )
 
 
 if __name__ == "__main__":
-    unittest.main()
+    main()
