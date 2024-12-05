@@ -21,27 +21,26 @@ def generate_strings(length: int) -> list[str]:
     :return: Список строк.
     """
     if not isinstance(length, int):
-        raise ValueError(NOT_INT_VALUE_TEMPL.format('length'))
-    if length <= 0:
         raise ValueError(STR_LENGTH_ERROR_MSG)
+    if length <1:
+        raise ValueError(STR_LENGTH_ERROR_MSG)
+    return generate_with_1(length)
 
-    def generate_with_0(n):
-        if n == 0:
-            return ['']
-        strings = []
-        strings += ['1' + s for s in generate_with_1(n - 1)]  
-        strings += ['0' + s for s in generate_with_0(n - 1) if s] 
-        return strings
+def generate_with_0(n):
+    if n == 1:
+        return ['0']
+    strings = []
+    strings+= [s + "0" for s in generate_with_1(n - 1)]
+        
 
-    def generate_with_1(n):
-        if n == 0:
-            return ['']
-        strings = []
-        strings += ['1' + s for s in generate_with_1(n - 1)]  
-        strings += ['0' + s for s in generate_with_0(n - 1)]  
-        return strings
+def generate_with_1(n):
+    if n == 1:
+        return ['1']
+    strings = []
+    strings+=[s + "1" for s in generate_with_1(n - 1)] + [s + "1" for s in generate_with_0(n - 1)] 
+    return strings
 
-    return _generate_with_1(length)
+    
 
 
 def binomial_coefficient(n: int, k: int, use_rec=False) -> int:
