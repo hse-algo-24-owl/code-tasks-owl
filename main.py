@@ -18,15 +18,15 @@ def validate(profit_matrix):
     if profit_matrix is None or len(profit_matrix) == 0:
         raise ValueError(PARAM_ERR_MSG)
 
-    rows = len(profit_matrix)
-    column = len(profit_matrix[0])
-    if column == 0:
+    number_of_investment_levels = len(profit_matrix)
+    number_of_projects = len(profit_matrix[0])
+    if number_of_projects == 0:
         raise ValueError(PARAM_ERR_MSG)
     
-    for i in range(rows):
-        if len(profit_matrix[i]) != column:
+    for i in range(number_of_investment_levels):
+        if len(profit_matrix[i]) != number_of_projects:
             raise ValueError(PARAM_ERR_MSG)
-        for j in range(column):
+        for j in range(number_of_projects):
             if not isinstance(profit_matrix[i][j], int):
                 raise ValueError(PARAM_ERR_MSG)
             if profit_matrix[i][j] < 0:
@@ -55,27 +55,27 @@ def get_invest_distribution(
     if profit_matrix is None or len(profit_matrix) == 0 :
         return {PROFIT: 0, DISTRIBUTION: []}
     
-    rows = len(profit_matrix)
-    column = len(profit_matrix[0])
-    
-    dp = [[0] * (rows + 1) for _ in range(column)]
-    distribution = [[[0] * column for _ in range(rows + 1)] for _ in range(column)]
+    number_of_investment_levels = len(profit_matrix)
+    number_of_projects = len(profit_matrix[0])
 
-    for j in range(column):
-        for i in range(1, rows + 1):
-            for k in range(i + 1):
-                profit = profit_matrix[k-1][j] if k > 0 else 0
-                remain_invest = i - k
-                total_profit = profit + dp[j-1][remain_invest] if j > 0 else profit
-                if total_profit > dp[j][i]:
-                    dp[j][i] = total_profit
-                    if j > 0:
-                        distribution[j][i] = distribution[j-1][remain_invest][:]
-                    distribution[j][i][j] = k
+    max_profits = [[0] * (number_of_investment_levels + 1) for _ in range(number_of_projects)]
+    distributions = [[[0] * number_of_projects for _ in range(number_of_investment_levels + 1)] for _ in range(number_of_projects)]
 
-    max_profit = dp[column - 1][rows]
-    best_distribution = distribution[column - 1][rows]
-    
+    for project_index in range(number_of_projects):
+        for investment_level in range(1, number_of_investment_levels + 1):
+            for previous_investment_level in range(investment_level + 1):
+                current_project_profit = profit_matrix[previous_investment_level -1][project_index] if previous_investment_level > 0 else 0
+                remain_invest = investment_level - previous_investment_level
+                total_profit = current_project_profit + (max_profits[project_index - 1][remain_invest] if project_index > 0 else 0)
+                if total_profit > max_profits[project_index][investment_level]:
+                    max_profits[project_index][investment_level] = total_profit
+                    if project_index > 0:
+                        distributions[project_index][investment_level] = distributions[project_index - 1][remain_invest][:]
+                    distributions[project_index][investment_level][project_index] = previous_investment_level
+
+    max_profit = max_profits[number_of_projects - 1][number_of_investment_levels]
+    best_distribution = distributions[number_of_projects - 1][number_of_investment_levels]
+
     return {PROFIT: max_profit, DISTRIBUTION: best_distribution}
 
 
