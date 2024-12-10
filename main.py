@@ -14,6 +14,26 @@ class ProfitValueError(Exception):
         self.row_idx = row_idx
         super().__init__(message)
 
+def validate(profit_matrix):
+    if profit_matrix is None or len(profit_matrix) == 0:
+        raise ValueError(PARAM_ERR_MSG)
+
+    rows = len(profit_matrix)
+    column = len(profit_matrix[0])
+    if column == 0:
+        raise ValueError(PARAM_ERR_MSG)
+    
+    for i in range(rows):
+        if len(profit_matrix[i]) != column:
+            raise ValueError(PARAM_ERR_MSG)
+        for j in range(column):
+            if not isinstance(profit_matrix[i][j], int):
+                raise ValueError(PARAM_ERR_MSG)
+            if profit_matrix[i][j] < 0:
+                raise ProfitValueError(NEG_PROFIT_ERR_MSG, j, i)
+            if i > 0 and profit_matrix[i][j] < profit_matrix[i-1][j]:
+                raise ProfitValueError(DECR_PROFIT_ERR_MSG, j, i)
+
 
 def get_invest_distribution(
     profit_matrix: list[list[int]],
@@ -31,7 +51,32 @@ def get_invest_distribution(
     profit - максимально возможная прибыль от инвестиций,
     distribution - распределение инвестиций между проектами.
     """
-    pass
+    validate(profit_matrix)
+    if profit_matrix is None or len(profit_matrix) == 0 :
+        return {PROFIT: 0, DISTRIBUTION: []}
+    
+    rows = len(profit_matrix)
+    column = len(profit_matrix[0])
+    
+    dp = [[0] * (rows + 1) for _ in range(column)]
+    distribution = [[[0] * column for _ in range(rows + 1)] for _ in range(column)]
+
+    for j in range(column):
+        for i in range(1, rows + 1):
+            for k in range(i + 1):
+                profit = profit_matrix[k-1][j] if k > 0 else 0
+                remain_invest = i - k
+                total_profit = profit + dp[j-1][remain_invest] if j > 0 else profit
+                if total_profit > dp[j][i]:
+                    dp[j][i] = total_profit
+                    if j > 0:
+                        distribution[j][i] = distribution[j-1][remain_invest][:]
+                    distribution[j][i][j] = k
+
+    max_profit = dp[column - 1][rows]
+    best_distribution = distribution[column - 1][rows]
+    
+    return {PROFIT: max_profit, DISTRIBUTION: best_distribution}
 
 
 def main():
