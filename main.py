@@ -15,6 +15,25 @@ class ProfitValueError(Exception):
         self.row_idx = row_idx
         super().__init__(message)
 
+def input_check(profit_matrix):
+    if profit_matrix is None or not profit_matrix or not profit_matrix[0]:
+        raise ValueError(PARAM_ERR_MSG)
+
+    for row_idx, row in enumerate(profit_matrix):
+        if len(row) != len(profit_matrix[0]):
+            raise ValueError(PARAM_ERR_MSG)
+        
+        for project_idx, value in enumerate(row):
+            if not isinstance(value, int):
+                raise ValueError(PARAM_ERR_MSG)
+            if value < 0:
+                raise ProfitValueError(NEG_PROFIT_ERR_MSG, project_idx, row_idx)
+
+    for project_idx in range(len(profit_matrix[0])):
+        for row_idx in range(1, len(profit_matrix)):
+            if profit_matrix[row_idx][project_idx] < profit_matrix[row_idx - 1][project_idx]:
+                raise ProfitValueError(DECR_PROFIT_ERR_MSG, project_idx, row_idx)
+
 
 def get_invest_distributions(
     profit_matrix: list[list[int]],
@@ -35,58 +54,32 @@ def get_invest_distributions(
     проектами, обеспечивающими максимальную прибыль.
     """
 
-    # Проверка на пустой список
-    if profit_matrix is None or not profit_matrix or not profit_matrix[0]:
-        raise ValueError(PARAM_ERR_MSG)
+    input_check(profit_matrix)
 
-    # Проверка кадратности матрицы и её значений
-    for row_idx, row in enumerate(profit_matrix):
-        if len(row) != len(profit_matrix[0]):
-            raise ValueError(PARAM_ERR_MSG)
-        
-        for project_idx, value in enumerate(row):
-            if not isinstance(value, int):
-                raise ValueError(PARAM_ERR_MSG)
-            if value < 0:
-                raise ProfitValueError(NEG_PROFIT_ERR_MSG, project_idx, row_idx)
-
-    # Проверка на возрастание прибыли с ростом инвестиций
-    for project_idx in range(len(profit_matrix[0])):
-        for row_idx in range(1, len(profit_matrix)):
-            if profit_matrix[row_idx][project_idx] < profit_matrix[row_idx - 1][project_idx]:
-                raise ProfitValueError(DECR_PROFIT_ERR_MSG, project_idx, row_idx)
-
-    dp = [[0] * (len(profit_matrix[0]) + 1) for _ in range(len(profit_matrix) + 1)]  # Массив для рассчета прибыли
-    dp_options = [[[[]] for _ in range(len(profit_matrix[0]) + 1)] for _ in range(len(profit_matrix) + 1)] # Массив путей
+    profits = [[0] * (len(profit_matrix[0]) + 1) for _ in range(len(profit_matrix) + 1)]
+    paths = [[[[]] for _ in range(len(profit_matrix[0]) + 1)] for _ in range(len(profit_matrix) + 1)]
 
 
-    for i in range(len(profit_matrix) + 1):
-        for j in range(1, len(profit_matrix[0]) + 1):
-            for k in range(i + 1):
+    for profit_table_row in range(len(profit_matrix) + 1):
+        for project in range(1, len(profit_matrix[0]) + 1):
+            for project_depth in range(profit_table_row + 1):
                 # Рассчёт прибыли
-                if k == 0:
-                    profit = dp[i - k][j - 1]
+                if project_depth == 0:
+                    profit = profits[profit_table_row - project_depth][project - 1]
                 else:
-                    profit = dp[i - k][j - 1] + profit_matrix[k - 1][j - 1]
+                    profit = profits[profit_table_row - project_depth][project - 1] + profit_matrix[project_depth - 1][project - 1]
 
                 # Обработка путей
-                if profit > dp[i][j]:
-                    dp[i][j] = profit
-                    dp_options[i][j] = [g + [k] for g in dp_options[i - k][j - 1]]
-                elif profit == dp[i][j]:
-                    dp_options[i][j] += [g + [k] for g in dp_options[i - k][j - 1]]
+                if profit > profits[profit_table_row][project]:
+                    profits[profit_table_row][project] = profit
+                    paths[profit_table_row][project] = [path + [project_depth] for path in paths[profit_table_row - project_depth][project - 1]]
+                elif profit == profits[profit_table_row][project]:
+                    paths[profit_table_row][project] += [path + [project_depth] for path in paths[profit_table_row - project_depth][project - 1]]
 
-    return {PROFIT: dp[len(profit_matrix)][len(profit_matrix[0])], DISTRIBUTIONS: [g for g in dp_options[len(profit_matrix)][len(profit_matrix[0])] if len(g) == len(profit_matrix[0])]}
+    return {PROFIT: profits[len(profit_matrix)][len(profit_matrix[0])], DISTRIBUTIONS: [path for path in paths[len(profit_matrix)][len(profit_matrix[0])] if len(path) == len(profit_matrix[0])]}
 
 
 def main():
-#     profit_matrix = [
-#     [11, 13, 14, 12],
-#     [15, 17, 19, 21],
-#     [22, 25, 28, 31],
-#     [36, 32, 40, 44],
-#     [51, 54, 53, 52],
-# ]
     profit_matrix = [[1, 1, 1],
                      [2, 2, 2],
                      [3, 3, 3]]
