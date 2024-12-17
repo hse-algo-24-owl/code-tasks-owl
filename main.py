@@ -19,27 +19,34 @@ def validation(profit_matrix: list[list[int]]) -> None:
     """ Проверяет корректность введенных данных
     """
     if isinstance(profit_matrix, list) == False:
-        print(1)
-        raise Exception(ValueError)
+        raise ValueError(PARAM_ERR_MSG)
+    
+    if len(profit_matrix) == 0:
+        raise ValueError(PARAM_ERR_MSG)
+
     for project in range (len(profit_matrix)):
         if isinstance(profit_matrix[project], list) == False:
-            print(2)
-            raise Exception(ValueError)
-        if len(profit_matrix) != len(profit_matrix[project]):
-            print(3)
-            raise Exception(ValueError)
-        for profit in range (len(profit_matrix[project])):
-            if isinstance(profit_matrix[project][profit], int) == False:
-                print(4)
-                raise Exception(ValueError)
-            
+            raise ValueError(PARAM_ERR_MSG)
+        
+        if len(profit_matrix[project]) == 0:
+            raise ValueError(PARAM_ERR_MSG)
+
+        for row in range (len(profit_matrix[project])):
+            if isinstance(profit_matrix[project][row], int) == False:
+                raise ValueError(PARAM_ERR_MSG)
+    
+
+    
+
     for project in range (len(profit_matrix)):
-        if profit_matrix[project][0] < 0:
-            raise Exception(ProfitValueError)
-        for profit in range (len(profit_matrix[project])-1):
-            if profit_matrix[project][profit] > profit_matrix[project][profit+1] or profit_matrix[project][profit+1] < 0:
-                raise Exception(ProfitValueError)
-            
+        for row in range (len(profit_matrix[project])):
+            if profit_matrix[project][row] < 0:
+                raise ProfitValueError(NEG_PROFIT_ERR_MSG, row, project)
+    
+    for project in range (len(profit_matrix)):
+        for row in range (len(profit_matrix[project])-1):
+            if profit_matrix[project][row] > profit_matrix[project][row+1]:
+                raise ProfitValueError(DECR_PROFIT_ERR_MSG, project, row+1)
     
 
 def get_invest_distributions(
@@ -64,7 +71,7 @@ def get_invest_distributions(
 
 
 def main():
-    profit_matrix = [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+    profit_matrix = [[1, -1]]
     print(get_invest_distributions(profit_matrix))
 
 
