@@ -20,23 +20,25 @@ def validation(profit_matrix: list[list[int]]) -> None:
     """
     if isinstance(profit_matrix, list) == False:
         print(1)
-        raise Exception("Введена не матрица")
+        raise Exception(ValueError)
     for project in range (len(profit_matrix)):
         if isinstance(profit_matrix[project], list) == False:
             print(2)
-            raise Exception("Введена не матрица")
+            raise Exception(ValueError)
         if len(profit_matrix) != len(profit_matrix[project]):
             print(3)
-            raise Exception("Матрица не квадратная")
-        for income in range (len(profit_matrix[project])):
-            if isinstance(profit_matrix[project][income], int) == False:
+            raise Exception(ValueError)
+        for profit in range (len(profit_matrix[project])):
+            if isinstance(profit_matrix[project][profit], int) == False:
                 print(4)
-                raise Exception("Матрица содержит не числа")
+                raise Exception(ValueError)
             
     for project in range (len(profit_matrix)):
-        for income in range (len(profit_matrix[project])-1):
-            if profit_matrix[project][income] > profit_matrix[project][income+1]:
-                raise Exception("Некорректный ввод. Один из проектов дает больше прибыли при меньших вложениях")
+        if profit_matrix[project][0] < 0:
+            raise Exception(ProfitValueError)
+        for profit in range (len(profit_matrix[project])-1):
+            if profit_matrix[project][profit] > profit_matrix[project][profit+1] or profit_matrix[project][profit+1] < 0:
+                raise Exception(ProfitValueError)
             
     
 
