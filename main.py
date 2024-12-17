@@ -15,6 +15,30 @@ class ProfitValueError(Exception):
         self.row_idx = row_idx
         super().__init__(message)
 
+def validation(profit_matrix: list[list[int]]) -> None:
+    """ Проверяет корректность введенных данных
+    """
+    if isinstance(profit_matrix, list) == False:
+        print(1)
+        raise Exception("Введена не матрица")
+    for project in range (len(profit_matrix)):
+        if isinstance(profit_matrix[project], list) == False:
+            print(2)
+            raise Exception("Введена не матрица")
+        if len(profit_matrix) != len(profit_matrix[project]):
+            print(3)
+            raise Exception("Матрица не квадратная")
+        for income in range (len(profit_matrix[project])):
+            if isinstance(profit_matrix[project][income], int) == False:
+                print(4)
+                raise Exception("Матрица содержит не числа")
+            
+    for project in range (len(profit_matrix)):
+        for income in range (len(profit_matrix[project])-1):
+            if profit_matrix[project][income] > profit_matrix[project][income+1]:
+                raise Exception("Некорректный ввод. Один из проектов дает больше прибыли при меньших вложениях")
+            
+    
 
 def get_invest_distributions(
     profit_matrix: list[list[int]],
@@ -33,6 +57,7 @@ def get_invest_distributions(
     distributions - списком со всеми вариантами распределения инвестиций между
     проектами, обеспечивающими максимальную прибыль.
     """
+    validation(profit_matrix)
     pass
 
 
